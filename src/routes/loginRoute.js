@@ -1,37 +1,10 @@
-require("firebase/auth");
-require("firebase/firestore");
-
-var firebaseConfig = {
-  apiKey: "AIzaSyD_QPsF344HuQPgZCH7sLlUVAJcdi0l7Ow",
-  authDomain: "projetoads-mack.firebaseapp.com",
-  databaseURL: "https://projetoads-mack.firebaseio.com",
-  projectId: "projetoads-mack",
-  storageBucket: "projetoads-mack.appspot.com",
-  messagingSenderId: "SENDER_ID",
-  appId: "projetoads-mack",
-  measurementId: "G-MEASUREMENT_ID",
-};
-var firebase = require("firebase/app");
-firebase.initializeApp(firebaseConfig);
-
 const express = require('express');
-const bodyParser = require('body-parser');
-const favicon = require('express-favicon');
-const path = require('path');
-const port = process.env.PORT || 8080;
-const app = express();
-app.use(favicon(__dirname + '/build/favicon.ico'));
-// the __dirname is the current directory from where the script is running
-app.use(express.static(__dirname));
-app.use(express.static(path.join(__dirname, 'build')));
-app.use(bodyParser.json());
-
-app.get('/ping', function (req, res) {
- return res.send('pong');
-});
-
+const router = express.Router();
 const { body, validationResult } = require('express-validator');
-app.post('/signup', 
+var firebase = require("firebase/app");
+// const controller = require ('../controllers/personController')
+
+router.post('/signup', 
   body('email').isEmail(),
   body('password').isLength({ min: 6 }),
   function (req, res) {
@@ -62,8 +35,7 @@ app.post('/signup',
     });
  });
 
- app.post('/signin', function (req, res) {
-
+ router.post('/signin', function (req, res) {
   firebase.auth().signInWithEmailAndPassword(req.body.email, req.body.password)
     .then((user) => {
       return res.json({
@@ -83,8 +55,4 @@ app.post('/signup',
     });
  });
 
-
-app.get('/*', function (req, res) {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
-app.listen(port);
+ module.exports = router;
